@@ -38,8 +38,7 @@ public class SpawnManager : MonoBehaviour
     {
         Instantiate(
             enemy,
-            spawnPoints[Random.Range(0, spawnPoints.Length)].transform.position +
-            Vector3.up,
+            spawnPoints[Random.Range(0, spawnPoints.Length)].transform.position,
             Quaternion.identity);
         canSpawn = false;
         StartCoroutine(SpawnTimer());
