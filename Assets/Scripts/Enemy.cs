@@ -1,18 +1,20 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    private Rigidbody rb;
     private Transform player;
 
     public float acceleration;
     public float maxSpeed;
 
     private bool alive = true;
+
+    public NavMeshAgent agent;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
         player = GameObject.FindWithTag("Player").transform;
         SetRigidBodies(true);
         SetColliders(false);
@@ -24,26 +26,19 @@ public class Enemy : MonoBehaviour
         if (alive)
         {
             transform.LookAt(player);
-            rb.AddForce(transform.forward * acceleration, ForceMode.Force);
-
-            if (rb.linearVelocity.magnitude > maxSpeed)
-            {
-                rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
-            }
+            agent.SetDestination(player.position);
         }
-        
-
     }
 
 
     public void Death()
     {
-        
+        agent.enabled = false;
 
         SetRigidBodies(false);
         SetColliders(true);
         GetComponentInChildren<Animator>().enabled = false;
-        
+
 
         alive = false;
         Destroy(gameObject, 5);

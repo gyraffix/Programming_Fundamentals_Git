@@ -21,13 +21,18 @@ public class Shoot : MonoBehaviour
 
     private void Fire()
     {
+        Debug.DrawRay(origin.position, origin.forward * 50f, Color.red, 2f);
         RaycastHit hit;
         if (Physics.Raycast(origin.position, origin.forward, out hit, 50))
         {
             Debug.Log(hit.transform.gameObject.name);
-            if (hit.transform.gameObject.CompareTag("Enemy"))
+
+            Enemy enemy = hit.transform.GetComponentInParent<Enemy>();
+            Debug.Log($"Hit {hit.transform.name}, Enemy in parent: {hit.transform.GetComponentInParent<Enemy>()}");
+
+            if (enemy != null)
             {
-                hit.transform.gameObject.GetComponent<Enemy>().Death();
+                enemy.Death();
                     
             }  
         }
