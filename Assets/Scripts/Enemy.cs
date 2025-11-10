@@ -7,17 +7,20 @@ public class Enemy : MonoBehaviour
 
     public float acceleration;
     public float maxSpeed;
+    public int points;
 
-    private bool alive = true;
+    public bool alive = true;
 
     public NavMeshAgent agent;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        player = GameObject.FindWithTag("Player").transform;
+        player = PlayerController.instance.gameObject.transform;
         SetRigidBodies(true);
         SetColliders(false);
+
+        points = 1;
     }
 
     // Update is called once per frame
@@ -26,7 +29,10 @@ public class Enemy : MonoBehaviour
         if (alive)
         {
             transform.LookAt(player);
+            transform.eulerAngles = new Vector3 (0, transform.eulerAngles.y, 0);
             agent.SetDestination(player.position);
+            agent.acceleration = acceleration;
+            agent.speed = maxSpeed;
         }
     }
 

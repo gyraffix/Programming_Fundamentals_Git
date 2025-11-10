@@ -1,48 +1,71 @@
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    public Rigidbody player;
+    static public PlayerController instance;
+
+    private GameManager gameManager;
+    
+
+    //-------------Player Variables-----------------
+
+    public Rigidbody rb;
+    public int maxHealth = 3;
+    public Slider healthSlider;
+    public float pushbackForce;
+    public Animator hitEffect;
+   
+
+
+    private int health;
+
+
+    //==============================================
+
 
     //-------------Camera Variables-----------------
 
     public Transform anchor;
-
     public float cameraSens;
-
-    private float rotationX;
     public float minRotationX;
     public float maxRotationX;
-    
-    
+
+    private float rotationX;
+
     //==============================================
 
 
     //-----------Movement Variables---------------
-    
+
     public float speed;
-    public float maxSpeed;
     
     //============================================
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //TODO: Move this into a GameManager Script
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        instance = this;
+        rb = gameObject.GetComponent<Rigidbody>();
+        gameManager = GameManager.instance;
+        health = maxHealth;
     }
 
     // Update is called once per frame
     void Update()
     {
-        MovePlayer();
         MoveCamera();
+        Debug.Log(health);
+    }
+    void FixedUpdate()
+    {
+        MovePlayer();
     }
 
     private void MovePlayer()
     {
-        player.AddRelativeForce
+        rb.AddRelativeForce
             (
             new Vector3(
                 Input.GetAxis("Horizontal"),
@@ -51,17 +74,6 @@ public class PlayerController : MonoBehaviour
                 ) * speed,
             ForceMode.Force
             );
-
-        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
-        {
-            player.linearVelocity = Vector3.zero;
-        }
-
-
-        if (player.linearVelocity.magnitude > maxSpeed)
-        {
-            player.linearVelocity = player.linearVelocity.normalized * maxSpeed;
-        }
 
     }
 
@@ -88,6 +100,19 @@ public class PlayerController : MonoBehaviour
                 0,
                 0
             );
+    }
+
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("hit by enemy");
+            health--;
+            healthSlider.value = health;
+            hitEffect.SetTrigger("Hit");
+        }
     }
 
 }
